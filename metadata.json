@@ -1,0 +1,6 @@
+{
+  "name": "Google Sites Builder",
+  "description": "An interactive, visual website creator and section editor structured like Google Sites, featuring theme customizers, drag-reorder lists, dynamic section insertions, file attachment hosting, and live frame-responsive preview modes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
