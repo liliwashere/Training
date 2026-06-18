@@ -88,8 +88,8 @@ export function InteractiveProbabilitySandbox() {
             <div className="grid grid-cols-2 gap-2">
               {choice.standard.map((item, idx) => (
                 <div key={idx} className="flex justify-between items-center p-2.5 bg-slate-50 border border-slate-100 rounded-lg text-xs font-mono">
-                  <span className="text-slate-750 font-bold">... {item.word}</span>
-                  <span className="text-slate-450 text-[10px]">{item.prob}</span>
+                  <span className="text-slate-700 font-bold">... {item.word}</span>
+                  <span className="text-slate-400 text-[10px]">{item.prob}</span>
                 </div>
               ))}
             </div>

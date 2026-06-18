@@ -72,7 +72,7 @@ export function InteractiveSpeedVsReasoning() {
               "px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer",
               selectedMode === 'flash'
                 ? "bg-google-blue text-white shadow-xs"
-                : "text-slate-650 hover:text-slate-800"
+                : "text-slate-600 hover:text-slate-800"
             )}
           >
             ⚡ Speed (Gemini Flash)
@@ -83,7 +83,7 @@ export function InteractiveSpeedVsReasoning() {
               "px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer",
               selectedMode === 'thinking'
                 ? "bg-slate-900 text-white shadow-xs"
-                : "text-slate-650 hover:text-slate-800"
+                : "text-slate-600 hover:text-slate-800"
             )}
           >
             🧠 Logic (Thinking Mode)

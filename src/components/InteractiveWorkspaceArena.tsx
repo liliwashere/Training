@@ -151,7 +151,7 @@ export function InteractiveWorkspaceArena() {
                 </div>
               </div>
 
-              <div className="space-y-2 bg-slate-50 border border-slate-150 p-3 rounded-xl">
+              <div className="space-y-2 bg-slate-50 border border-slate-200 p-3 rounded-xl">
                 <div className="flex justify-between items-center">
                   <span className="text-[9px] font-bold text-google-blue uppercase tracking-widest flex items-center gap-1">
                     <Sparkles className="w-3 h-3 text-google-yellow fill-current" />

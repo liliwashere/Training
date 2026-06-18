@@ -292,7 +292,7 @@ export default function App() {
                       "w-full px-3 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-between border cursor-pointer",
                       showPresenterNotes 
                         ? "bg-amber-500 text-slate-950 border-amber-500 font-extrabold" 
-                        : "bg-slate-800 text-slate-350 border-slate-700 hover:bg-slate-700"
+                        : "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
                     )}
                   >
                     <span className="font-sans">Presenter Side Notes</span>
@@ -307,7 +307,7 @@ export default function App() {
                       "w-full px-3 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-between border cursor-pointer",
                       session === 'demolab'
                         ? "bg-google-green text-slate-950 border-google-green font-extrabold"
-                        : "bg-slate-800 text-slate-350 border-slate-700 hover:bg-slate-700"
+                        : "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
                     )}
                   >
                     <span className="font-sans">🛠 Demo Practice Lab</span>
@@ -366,10 +366,10 @@ function SessionOneContent() {
             A Large Language Model is the **World's Most Powerful Auto-Complete**. It maps patterns, not facts.
           </p>
           <div className="space-y-3">
-            <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-150">
+            <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
                <p className="text-xs text-slate-500 leading-relaxed font-medium">✨ <strong>How it acts:</strong> Predicts the next most likely word based on patterns seen during training, rather than human conscious memory.</p>
             </div>
-            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-150 font-mono text-xs">
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 font-mono text-xs font-normal">
               <div className="text-slate-400 mb-1.5">// Probability Model</div>
               <div className="flex flex-wrap gap-1.5 text-slate-700">
                 <span className="opacity-40">"The</span>
@@ -1759,12 +1759,9 @@ Slide 5: Expected Impact & Metrics.
 
 Keep all slide copy concise, structured, and ready to be loaded by the Slides app side-panel.`;
 
-  const SLIDES_APP_GEMINI_PROMPT = `Create a 5-slide presentation about our product launch plan based on this structure:
-Slide 1: Cover: "Next-Gen Launch Plan". Subtitle: "Q3 Strategy".
-Slide 2: Market Challenge. Bullets: "Manual operational workflows are slow", "High front desk overhead".
-Slide 3: Our Solution. Bullets: "Auto-answering 85% of queries", "PMS real-time synchronization".
-Slide 4: Growth Timeline. Bullets: "Q1 Pilot Study", "Q2 System Integration", "Q3 Global Deployment".
-Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-booking click rates".`;
+  const SLIDES_APP_BRIDGE_TEMPLATE = `Create a 5-slide presentation based exactly on the drafted outline:
+
+[Paste the outline output generated from Standalone Gemini here]`;
 
   const ASSET_C = `"A clean mockup of a smartphone displaying a sleek, clean chat interface inside a bright, luxury hotel lobby. In the background, a smiling receptionist interacts naturally with a guest. Minimalist aesthetic, soft cinematic lighting, tech-forward, corporate style optimized for a B2B presentation slide."`;
 
@@ -1773,6 +1770,48 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
 2. KEY INTEGRATIONS: We seamlessly sync with Oracle Opera, Mews, and Cloudbeds Property Management Systems (PMS). This allows our AI to handle live check-ins, room availability lookups, and real-time upselling of hotel amenities.
 3. SECURITY & COMPLIANCE: HiJiffy is entirely GDPR compliant. Guest data is encrypted at rest and in transit. We never pass sensitive credit card details through unencrypted chat nodes.
 4. OUR CLIENT BASE: Over 2,000 hotels worldwide rely on HiJiffy to optimize operational workflows, boost direct bookings, and dramatically reduce front desk overhead.`;
+
+  const STUDIO_AUTOMATION_GEMINI_PROMPT = `You are an expert B2B SaaS Sales Assistant supporting a sales professional representing HiJiffy—an AI guest communication platform for hotels. 
+
+Analyze the email text provided below from {{client_email}} at {{hotel_name}}. Your job is to process this information and generate exactly two distinct outputs. Do not include introductory filler, conversational meta-commentary, or post-text explanations.
+
+### STAKEHOLDER VALUE MATRIX
+- General Managers (GMs): Operational efficiency, revenue protection, guest satisfaction.
+- Revenue Managers: Direct bookings, conversion optimization, lowering CAC.
+- Marketing/E-commerce: Lead generation, digital conversion funnels, brand consistency.
+- Operations: Lowering team workload, response speed, service consistency.
+- Ownership Groups: Portfolio scalability, ROI, NOI, labor cost optimization.
+
+### NEGATIVE CONSTRAINTS
+- No Hybrid Outputs: Do not mix SPICED data with the client email draft.
+- No Hype or Clichés: Never use words like "revolutionary," "game-changing," "disruptive," "thrilled," or "excited."
+- No Hard-Selling: Avoid aggressive finishes or artificial urgency.
+- Max Word Count: The email draft must be strictly under 150 words.
+- Always sign off the email draft with "Lilit". Never use placeholders like [Your Name].
+
+---
+
+### OUTPUT 1: INTERNAL HUBSPOT LOG (SPICED FRAMEWORK)
+Format using literal SPICED headers. Every note must be concise, factual, and explicitly highlight risks or blockers. Use "Unknown" if data is missing.
+
+Situation (S): Current tech stack (PMS/Booking Engine), booking mix, property size, or staffing setup.
+Pain (P): Specific operational or revenue bottlenecks (e.g., missed messages, high OTA commissions).
+Impact (I): The financial or operational consequence of leaving the pain unaddressed.
+Critical Event (C): Hard deadlines, contract renewals, or seasonal triggers.
+Decision Criteria / Process (ED): Procurement steps, timelines, stakeholders, and immediate next actions.
+
+---
+
+### OUTPUT 2: EXTERNAL CLIENT-FACING EMAIL DRAFT
+Draft a hyper-personalized, challenge-focused prospecting response aligned strictly with the recipient's implied persona.
+- Style: Professional, conversational, concise, consultative, and focused on business outcomes/ROI.
+- Scannability: Use short paragraphs and bold text for key phrases.
+- Call to Action: Conclude with a single, low-friction question.
+- Sign-off: Lilit
+
+---
+EMAIL TEXT TO ANALYZE:
+{{Step 1: Email Body}}`;
 
   const toggleAccordion = (index: number) => {
     setOpenSection(openSection === index ? null : index);
@@ -1850,13 +1889,63 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
               >
                 <div className="p-6 space-y-6">
                   {/* HERO PARADIGM SHIFT */}
-                  <div className="bg-gradient-to-r from-google-blue/5 via-transparent to-transparent p-6 rounded-2xl border border-google-blue/10 space-y-2">
-                    <span className="bg-google-blue/10 text-google-blue text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider uppercase inline-block">
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/80 space-y-2">
+                    <span className="bg-[#eff6ff] text-google-blue text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wider uppercase inline-block">
                       The Workflow Transition Paradigm
                     </span>
-                    <p className="text-slate-700 text-sm md:text-base leading-relaxed">
-                      You are moving from a siloed model (ChatGPT in a separate browser tab) to a context-aware model (Gemini inside Workspace). To maintain your precision and <strong>SPICED methodology</strong> without copy-paste overhead, you don't "train" or fine-tune models anymore—you <strong>"anchor"</strong> them natively using <strong>Gems</strong> and connected Workspace files.
+                    <p className="text-slate-700 text-sm leading-relaxed font-normal">
+                      Transitioning from a siloed model (such as ChatGPT in a separate browser tab) to a context-aware model (such as Gemini integrated within Google Workspace) streamlines standard operations. To preserve precision and apply methodologies like <strong>SPICED</strong> without manual copy-paste overhead, models can be <strong>"anchored"</strong> natively using <strong>Gems</strong> linked to Workspace documents.
                     </p>
+                  </div>
+
+                  {/* GOOGLE WORKSPACE ENTERPRISE AI CAPABILITIES (INFORMATIONAL CARD) */}
+                  <div id="workspace-capabilities-info" className="p-6 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-4">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-extrabold text-google-blue uppercase tracking-widest block">
+                        🔮 Google Workspace Enterprise AI Capabilities
+                      </span>
+                      <p className="text-slate-500 text-xs">
+                        Harness native, context-aware artificial intelligence across the entire workspace suite to streamline workflows without manual context switching:
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div id="info-docs-audio" className="p-4 bg-white border border-slate-200 rounded-xl space-y-1.5 shadow-xs">
+                        <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                          🎙️ Document-to-Audio Overviews
+                        </span>
+                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                          Instantly transform written materials (e.g. operational PDFs, checklists, onboarding manuals) into rich, high-fidelity audio dialogue or synthetic podcasts automatically.
+                        </p>
+                      </div>
+
+                      <div id="info-meet-translate" className="p-4 bg-white border border-slate-200 rounded-xl space-y-1.5 shadow-xs">
+                        <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                          🌍 Real-Time Meeting Translation
+                        </span>
+                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                          Enable real-time audio translation, live transcript subtitles, and multi-language communication streams natively during active video conferences in Google Meet.
+                        </p>
+                      </div>
+
+                      <div id="info-slides-images" className="p-4 bg-white border border-slate-200 rounded-xl space-y-1.5 shadow-xs">
+                        <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                          🎨 Slide Creative Canvas
+                        </span>
+                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                          Generate elegant slide background visual imagery, custom mockup styles, and vector design layouts instantly by prompting Gemini directly onto your Slides canvas.
+                        </p>
+                      </div>
+
+                      <div id="info-relevant-cases" className="p-4 bg-white border border-slate-200 rounded-xl space-y-1.5 shadow-xs">
+                        <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                          💼 Relevant Enterprise Use Cases
+                        </span>
+                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                          Co-author high-end strategy documents in Docs, auto-respond to active email threads in Gmail, refine messy data rows in Sheets, or publish synchronized prompt handbooks on Sites.
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   {/* INTERACTIVE WORKSHOP PRESENTER TABS */}
@@ -1895,7 +1984,7 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                     <div className="bg-white border border-slate-200 rounded-2xl p-6 min-h-[300px] shadow-xs">
                       {activeStepTab === 1 && (
                         <div className="space-y-6">
-                          <div className="border-b border-slate-150 pb-3">
+                          <div className="border-b border-slate-200 pb-3">
                             <h3 className="text-base font-extrabold text-slate-800 flex items-center gap-2">
                               <span>🧠</span> Concept: The Gemini-Gmail-HubSpot Workflow Loop
                             </h3>
@@ -1903,30 +1992,30 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                           </div>
                           
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="space-y-2 bg-slate-50 p-5 rounded-xl border border-slate-150 relative overflow-hidden">
+                            <div className="space-y-2 bg-slate-50 p-5 rounded-xl border border-slate-200 relative overflow-hidden">
                               <div className="absolute top-0 left-0 w-1.5 h-full bg-google-blue" />
                               <span className="w-6 h-6 rounded-full bg-google-blue/10 text-google-blue flex items-center justify-center font-bold text-xs">1</span>
                               <h4 className="font-bold text-slate-800 text-sm">The Setup: Custom Gem</h4>
-                              <p className="text-[11px] text-slate-500 leading-relaxed">
-                                Create a specialized sales assistant Gem in gemini.google.com. Paste your <strong>"Operational Bible"</strong> (HiJiffy voice guidelines, SPICED framework definitions, and tone rules) inside its instructions. It stays primed forever.
+                              <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                                Create a specialized sales assistant Gem in gemini.google.com. Paste the "Operational Bible" (including HiJiffy voice guidelines, SPICED framework definitions, and tone rules) inside the instructions box to keep the Gem permanently primed.
                               </p>
                             </div>
 
-                            <div className="space-y-2 bg-slate-50 p-5 rounded-xl border border-slate-150 relative overflow-hidden">
+                            <div className="space-y-2 bg-slate-50 p-5 rounded-xl border border-slate-200 relative overflow-hidden">
                               <div className="absolute top-0 left-0 w-1.5 h-full bg-google-green" />
                               <span className="w-6 h-6 rounded-full bg-google-green/10 text-google-green flex items-center justify-center font-bold text-xs">2</span>
                               <h4 className="font-bold text-slate-800 text-sm">The Execution: Gmail Sidebar</h4>
-                              <p className="text-[11px] text-slate-500 leading-relaxed">
-                                Open active email threads directly inside Gmail. Select your Gem in the sidebar panel. Gemini dynamically digests thread context and crafts highly targeted responses instantly.
+                              <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                                Open active email threads directly inside Gmail. Select the designated Gem in the sidebar panel. Gemini dynamically digests thread context and drafts targeted responses.
                               </p>
                             </div>
 
-                            <div className="space-y-2 bg-slate-50 p-5 rounded-xl border border-slate-150 relative overflow-hidden">
+                            <div className="space-y-2 bg-slate-50 p-5 rounded-xl border border-slate-200 relative overflow-hidden">
                               <div className="absolute top-0 left-0 w-1.5 h-full bg-purple-500" />
                               <span className="w-6 h-6 rounded-full bg-purple-50/50 text-purple-600 flex items-center justify-center font-bold text-xs">3</span>
                               <h4 className="font-bold text-slate-800 text-sm">The Sync: HubSpot CRM</h4>
-                              <p className="text-[11px] text-slate-500 leading-relaxed">
-                                Direct Gemini to compile notes directly to your synced Google Docs tracker, then copy the formatted timeline data into HubSpot's active sidebar extension panel. No cross-app style crashes.
+                              <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                                Instruct Gemini to compile notes directly to a synced Google Docs tracker, then transfer the formatted timeline data into HubSpot's active sidebar extension panel without cross-app style crashes.
                               </p>
                             </div>
                           </div>
@@ -1936,7 +2025,7 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
 
                       {activeStepTab === 2 && (
                         <div className="space-y-6">
-                          <div className="border-b border-slate-150 pb-3">
+                          <div className="border-b border-slate-200 pb-3">
                             <h3 className="text-base font-extrabold text-slate-800 flex items-center gap-2">
                               <span>🔌</span> Step 1: Extract Existing ChatGPT Rules & Convert Live
                             </h3>
@@ -1949,8 +2038,8 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5">
                                 <span className="font-bold text-slate-800 block">Option A: Custom Instructions (General Profile)</span>
                                 <p className="text-slate-600 leading-relaxed">
-                                  1. Open ChatGPT, click on user profile (bottom-left) ➔ Select <strong>"Customize ChatGPT"</strong>.<br />
-                                  2. Copy the contents of both conversational text boxes (how you want ChatGPT to respond).
+                                  1. Open ChatGPT, click on the user profile ➔ Select <strong>"Customize ChatGPT"</strong>.<br />
+                                  2. Copy the contents of both conversational text boxes to preserve previous settings.
                                 </p>
                               </div>
                               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5">
@@ -1981,7 +2070,7 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                               {CHATGPT_TO_GEMINI_PROMPT}
                             </pre>
                             <p className="text-[11px] text-slate-500 italic">
-                              💡 Copy this prompt, paste any messy past directives into are bracket placeholder, and query ChatGPT/Gemini to translate them automatically into a clean directive.
+                              💡 Copy this prompt, insert past custom rules inside the input bracket placeholder, and run the query to translate them into a structured Gemini directive.
                             </p>
                           </div>
                         </div>
@@ -1989,30 +2078,30 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
 
                       {activeStepTab === 3 && (
                         <div className="space-y-6">
-                          <div className="border-b border-slate-150 pb-3">
+                          <div className="border-b border-slate-200 pb-3">
                             <h3 className="text-base font-extrabold text-slate-800 flex items-center gap-2">
-                              <span>💎</span> Step 2: Creating your Personalized Live Gem
+                              <span>💎</span> Step 2: Creating a Live Assistant Gem
                             </h3>
-                            <p className="text-slate-500 text-xs mt-0.5">Creating the permanent operational brain of your sales workflow.</p>
+                            <p className="text-slate-500 text-xs mt-0.5">Creating the permanent operational engine of the sales workflow.</p>
                           </div>
 
-                          <div className="bg-emerald-500/[0.04] border border-emerald-500/20 bg-emerald-50/20 rounded-xl p-4 space-y-2 text-xs">
-                            <div className="flex items-center gap-1.5 text-emerald-700 font-bold">
+                          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2 text-xs">
+                            <div className="flex items-center gap-1.5 text-slate-800 font-bold">
                               <span>✨</span> Pure Custom Directives
                             </div>
                             <p className="text-slate-600 leading-relaxed font-sans">
-                              We aren't going to use a generic mock or pre-baked template. Your custom Gem should be powered <strong>directly by the translated system instructions you created in Step 1</strong>. This ensures your customized workflow voice and SPICED constraints are exactly what operates the Gem.
+                              Rather than relying on generic mock templates, custom Gems are powered directly by the translated system instructions created in Step 1. This guarantees that custom voice guidelines and SPICED framework constraints systematically dictate operations.
                             </p>
                           </div>
 
                           <div className="space-y-3">
                             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Live Walkthrough instructions:</span>
                             <ol className="text-xs text-slate-600 list-decimal pl-5 space-y-2 leading-relaxed">
-                              <li>Go to <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" className="text-google-blue font-bold hover:underline inline-flex items-center gap-0.5">gemini.google.com 🔗</a> or trigger your Gemini sidebar workspace dashboard.</li>
-                              <li>At the bottom of the left-hand navigation column, click on <strong>"Gems Manager"</strong> (or "Gems") ➔ Click <strong>"New Gem"</strong>.</li>
-                              <li>Title your Gem: <strong className="text-slate-800 font-bold">"HiJiffy Sales Companion"</strong> (or your custom brand companion).</li>
-                              <li>Paste your <strong>custom system instructions generated from Step 1</strong> into the <strong>"Instructions"</strong> panel.</li>
-                              <li>Click <strong>"Save"</strong> on your new Gem. It is now instantly anchored, synchronized, and ready to trigger.</li>
+                              <li>Go to <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" className="text-google-blue font-bold hover:underline inline-flex items-center gap-0.5">gemini.google.com 🔗</a> or trigger the Gemini sidebar workspace panel.</li>
+                              <li>At the bottom of the left-hand navigation column, click on <strong>"Gems Manager"</strong> ➔ Click <strong>"New Gem"</strong>.</li>
+                              <li>Title the Gem: <strong className="text-slate-800 font-bold">"HiJiffy Sales Companion"</strong> (or a preferred custom name).</li>
+                              <li>Paste the custom system instructions generated from Step 1 into the <strong>"Instructions"</strong> panel.</li>
+                              <li>Click <strong>"Save"</strong> to finalize and anchor the Gem, making it ready to handle queries.</li>
                             </ol>
                           </div>
                         </div>
@@ -2020,30 +2109,30 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
 
                       {activeStepTab === 4 && (
                         <div className="space-y-6">
-                          <div className="border-b border-slate-150 pb-3">
+                          <div className="border-b border-slate-200 pb-3">
                             <h3 className="text-base font-extrabold text-slate-800 flex items-center gap-2">
                               <span>📧</span> Step 3: Activating the Gmail Sidebar Loop (Live Exercise)
                             </h3>
-                            <p className="text-slate-500 text-xs mt-0.5">Let's run a live test scenario using your newly created Gem.</p>
+                            <p className="text-slate-500 text-xs mt-0.5">Run a live test scenario using the newly created Gem.</p>
                           </div>
 
-                          <div className="bg-blue-500/[0.04] border border-blue-500/20 bg-blue-50/20 rounded-xl p-4 space-y-2 text-xs">
-                            <div className="flex items-center gap-1.5 text-blue-700 font-bold">
+                          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2 text-xs">
+                            <div className="flex items-center gap-1.5 text-slate-800 font-bold">
                               <span>📨</span> Presentation Tip: Live Interaction
                             </div>
                             <p className="text-slate-600 leading-relaxed font-sans">
-                              Instead of using generic static templates, this demo is fully interactive. Simply open any real customer email (for this live demo, I will send you an email right now!) and draft the response natively side-by-side using Gemini.
+                              Instead of using generic static templates, this demo illustrates live interaction parameters. Users can open an incoming customer email in Gmail and draft responses natively side-by-side using Gemini.
                             </p>
                           </div>
 
                           <div className="space-y-3">
                             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Live Walkthrough instructions:</span>
                             <ol className="text-xs text-slate-600 list-decimal pl-5 space-y-2 leading-relaxed">
-                              <li>Open Gmail, and <strong>open an email from a customer</strong> (for this demo I will send an email).</li>
+                              <li>Open Gmail and <strong>open any customer email</strong>.</li>
                               <li>Launch the <strong>Gemini side panel</strong> in Gmail (the vertical sparkle icon on the right).</li>
-                              <li>Select your brand-new <strong>"HiJiffy Sales Companion"</strong> Gem from the assistants list.</li>
+                              <li>Select the brand-new <strong>"HiJiffy Sales Companion"</strong> Gem from the assistants list.</li>
                               <li>Command the Gem: <code className="text-slate-800 font-semibold bg-slate-100 px-1.5 py-0.5 rounded font-mono text-[11px] block mt-1.5 select-all border border-slate-200">"Read the details below, draft a SPICED response to this email. Focus on WhatsApp booking lag."</code></li>
-                              <li>Watch the sidebar compile the structured reply in seconds using your anchored brand rules. Click <strong>"Insert"</strong> to drop the text directly.</li>
+                              <li>Observe as the sidebar compiles the structured reply in seconds using anchored brand rules. Select <strong>"Insert"</strong> to populate the Gmail draft.</li>
                             </ol>
                           </div>
                         </div>
@@ -2051,20 +2140,20 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
 
                       {activeStepTab === 5 && (
                         <div className="space-y-6">
-                          <div className="border-b border-slate-150 pb-3">
+                          <div className="border-b border-slate-200 pb-3">
                             <h3 className="text-base font-extrabold text-slate-800 flex items-center gap-2">
                               <span>🔄</span> Step 4: Programmatic Gem "Slash Commands"
                             </h3>
-                            <p className="text-slate-500 text-xs mt-0.5">Program your Gem to respond to custom triggers without custom developer code.</p>
+                            <p className="text-slate-500 text-xs mt-0.5">Program Gems to respond to custom triggers without custom developer code.</p>
                           </div>
 
                           <div className="space-y-4">
-                            <div className="bg-blue-500/[0.04] border border-blue-500/10 bg-blue-50/10 rounded-xl p-4 text-xs space-y-2.5 text-slate-600 leading-relaxed font-sans">
+                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs space-y-2.5 text-slate-700 leading-relaxed font-sans">
                               <p>
-                                While the standard web interface for Gemini Gems doesn't have a built-in macro engine that creates a clickable pop-up menu when you type a /, you can easily program any Gem to respond to text-based <strong>"slash commands"</strong> just like a software developer would!
+                                While the standard web interface for Gemini Gems does not have a native interactive menu that displays on typing a /, any Gem can be programmed to respond to text-based <strong>"slash commands"</strong> effectively.
                               </p>
                               <p>
-                                By defining the command directly inside the Gem's core instructions, you teach it to watch for that specific trigger word and execute your structured framework instantly.
+                                Defining the command directly inside the Gem's core instructions teaches it to watch for that specific trigger word and execute the structured framework automatically.
                               </p>
                             </div>
 
@@ -2073,7 +2162,7 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                                 <span className="text-google-blue">⚙️</span> 1. The Instruction Setup:
                               </h4>
                               <p className="text-xs text-slate-600 leading-normal">
-                                To make this work, click <strong>"Edit Gem"</strong> inside your Gemini dashboard and paste this exact logic blueprint at the bottom of your <strong>Instructions</strong> box:
+                                To configure this behavior, navigate to <strong>"Edit Gem"</strong> inside the Gemini dashboard and append this exact logic blueprint to the bottom of the <strong>Instructions</strong> box:
                               </p>
 
                               {/* COMMAND SETUP CODE BOX */}
@@ -2086,7 +2175,7 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                                     onClick={() => handleCopy(ASSET_B, 'hubspotInstructions')}
                                     className="bg-white/5 border border-white/10 hover:border-[#22d3ee] flex items-center gap-1.5 text-white px-3 py-1 rounded-md text-[10px] font-bold cursor-pointer transition-all active:scale-95 hover:bg-white/10"
                                   >
-                                    {copiedId === 'hubspotInstructions' ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-cyan-450" />}
+                                    {copiedId === 'hubspotInstructions' ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-cyan-400" />}
                                     {copiedId === 'hubspotInstructions' ? "Copied!" : "Copy Command Logic"}
                                   </button>
                                 </div>
@@ -2098,10 +2187,10 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
 
                             <div className="space-y-3 pt-2">
                               <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
-                                <span className="text-google-green">💬</span> 2. How You Use It in Chat:
+                                <span className="text-google-green">💬</span> 2. How to Use It in Chat:
                               </h4>
                               <p className="text-xs text-slate-600 leading-normal">
-                                Once you save those instructions, you don't need to explain the SPICED framework to your Gem ever again. When you are ready to log notes, just type <code className="p-0.5 bg-slate-100 border border-slate-200 text-slate-800 rounded font-bold">/Hubspot</code> followed by your raw details:
+                                Once these instructions are saved, manual explanations of the SPICED framework are no longer necessary. To log customer notes, enter the command <code className="p-0.5 bg-slate-100 border border-slate-200 text-slate-800 rounded font-bold">/Hubspot</code> followed by the raw details:
                               </p>
 
                               {/* EXAMPLE PROMPT CODE BOX */}
@@ -2129,7 +2218,7 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                                 🎯 What the Gem will output:
                               </h4>
                               <p className="text-xs text-slate-600 leading-normal">
-                                The Gem will instantly skip all conversational pleasantries or typical preambles and output a pristine structured SPICED CRM log:
+                                The Gem will bypass conversational preambles and output a pristine, structured SPICED CRM payload:
                               </p>
 
                               <div className="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden font-sans text-xs">
@@ -2161,12 +2250,12 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                             </div>
 
                             {/* PRO TIP ALERT */}
-                            <div className="bg-emerald-500/[0.03] border border-emerald-500/15 p-4 rounded-xl text-xs space-y-1.5">
-                              <span className="font-bold text-emerald-800 flex items-center gap-1">
+                            <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl text-xs space-y-1.5">
+                              <span className="font-bold text-slate-800 flex items-center gap-1">
                                 <span>💡</span> Pro Tip: Stack Multiple Commands!
                               </span>
-                              <p className="text-slate-600 leading-relaxed leading-normal">
-                                You can stack multiple commands in the same Gem as your skills catalog expands! For example, you could add a <code className="p-0.5 bg-slate-100 text-slate-700 font-mono rounded font-bold">/Brief</code> command to quickly summarize long client threads, or a <code className="p-0.5 bg-slate-100 text-slate-700 font-mono rounded font-bold">/Draft</code> command to generate contextual responses automatically using your validated tone matrix profiles.
+                              <p className="text-slate-600 leading-relaxed font-normal">
+                                Multiple commands can be stacked inside the same Gem as operational needs expand. For example, adding a <code className="p-0.5 bg-slate-100 text-slate-700 font-mono rounded font-bold">/Brief</code> command to summarize client threads, or a <code className="p-0.5 bg-slate-100 text-slate-700 font-mono rounded font-bold">/Draft</code> command to generate contextual responses automatically using validated tone profiles.
                               </p>
                             </div>
                           </div>
@@ -2175,86 +2264,86 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
 
                       {activeStepTab === 6 && (
                         <div className="space-y-6">
-                          <div className="border-b border-slate-150 pb-3">
+                          <div className="border-b border-slate-200 pb-3">
                             <h3 className="text-base font-extrabold text-slate-800 flex items-center gap-2">
                               <span>⚡</span> Step 5: Iterative Gem Upgrades & Workaround
                             </h3>
-                            <p className="text-slate-500 text-xs mt-0.5">How to make your Gem build its own persistent instructions dynamically.</p>
+                            <p className="text-slate-500 text-xs mt-0.5">Dynamic persistent instruction upgrades for custom Gems.</p>
                           </div>
 
                           <div className="space-y-4">
-                            <div className="p-4 rounded-xl bg-amber-500/[0.03] border border-amber-500/10 text-xs space-y-2 text-slate-600 leading-relaxed">
-                              <span className="font-bold text-amber-700 flex items-center gap-1.5 text-sm">
+                            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2 text-slate-700 leading-relaxed font-sans">
+                              <span className="font-bold text-slate-800 flex items-center gap-1.5 text-sm">
                                 <span>⚠️</span> The Core Limitation
                               </span>
                               <p>
-                                Right now, Gems cannot automatically rewrite their own system instructions based on your chat corrections. They don't have <strong>"persistent learning"</strong> that updates their baseline settings across separate chats.
+                                Gems cannot automatically rewrite baseline settings based on live in-chat corrections. They lack <strong>"persistent learning"</strong> parameters capable of updating baseline configurations across distinct sessions.
                               </p>
                               <p>
-                                However, you can use a clever workaround: <strong>you can make the Gem generate its own instruction updates for you</strong>.
+                                However, a practical workaround is to <strong>direct the Gem to generate the corresponding instruction updates</strong>.
                               </p>
                               <p>
-                                Instead of trying to figure out how to phrase a new rule for its settings, you can ask the Gem to write the exact text you need to copy and paste.
+                                Rather than manually drafting configuration rules, the Gem can be prompted to synthesize the exact logic required for installation.
                               </p>
                             </div>
 
                             <div className="space-y-3">
-                              <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">How to make the Gem do the heavy lifting:</h4>
+                              <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Autonomous Instruction Generation:</h4>
                               <p className="text-xs text-slate-600 leading-relaxed">
-                                When you successfully correct a Gem in an active chat session, leverage this pre-optimized prompt to get your permanent settings upgrade block:
+                                When correcting a Gem in an active session, the following pre-optimized prompt can be used to generate the permanent settings upgrade block:
                               </p>
 
                               {/* PROMPT COPY BOX */}
                               <div className="space-y-2">
                                 <div className="flex justify-between items-center bg-[#090d16] px-4 py-2.5 rounded-t-xl border-b border-[#1f2937]">
-                                  <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-widest">
+                                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
                                     🔌 Feedback Mirror Prompt
                                   </span>
                                   <button
                                     onClick={() => handleCopy(
-                                      `Now that we have this working correctly, look back at our conversation. Write a clear, concise instruction block that I can copy and paste into your Gem settings so you always remember to do this in future chats.`,
+                                      `Now that we have this working correctly, analyze our active conversation details and write a clear, concise instruction block that can be copied and pasted directly into your settings so this instruction is applied to future chats.`,
                                       'gemUpgradeWorkaround'
                                     )}
-                                    className="bg-white/5 border border-white/10 hover:border-[#fbbf24] flex items-center gap-1.5 text-white px-3 py-1 rounded-md text-[10px] font-bold cursor-pointer transition-all active:scale-95 hover:bg-white/10"
+                                    className="bg-white/5 border border-white/10 hover:border-slate-300 flex items-center gap-1.5 text-white px-3 py-1 rounded-md text-[10px] font-bold cursor-pointer transition-all active:scale-95 hover:bg-white/10"
                                   >
-                                    {copiedId === 'gemUpgradeWorkaround' ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-yellow-400" />}
+                                    {copiedId === 'gemUpgradeWorkaround' ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
                                     {copiedId === 'gemUpgradeWorkaround' ? "Copied Prompt!" : "Copy Prompt"}
                                   </button>
                                 </div>
-                                <div className="p-4 bg-slate-900 border border-slate-800 rounded-b-xl font-mono text-xs text-[#34d399] leading-relaxed whitespace-pre-wrap">
-                                  "Now that we have this working correctly, look back at our conversation. Write a clear, concise instruction block that I can copy and paste into your Gem settings so you always remember to do this in future chats."
+                                <div className="p-4 bg-slate-900 border border-slate-800 rounded-b-xl font-mono text-xs text-[#34d399] leading-relaxed whitespace-pre-wrap select-all">
+                                  "Now that we have this working correctly, analyze our active conversation details and write a clear, concise instruction block that can be copied and pasted directly into your settings so this instruction is applied to future chats."
                                 </div>
                               </div>
 
-                              <p className="text-xs text-slate-600 leading-relaxed">
-                                The Gem will analyze the active context, output a pristine set of parameters based on what it just learned, and then all you have to do is:
+                              <p className="text-xs text-slate-600 leading-relaxed pt-1">
+                                The Gem will analyze the active context and output a pristine set of parameters. The generated block can be applied as follows:
                               </p>
 
                               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
-                                <div className="bg-slate-50 border border-slate-150 p-3.5 rounded-xl space-y-1">
+                                <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl space-y-1">
                                   <span className="text-xs font-extrabold text-slate-800 flex items-center gap-1.5">
                                     <span className="bg-slate-200 text-slate-700 text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold">1</span>
                                     Copy instructions
                                   </span>
-                                  <p className="text-[10px] text-slate-500 leading-normal">
+                                  <p className="text-[10px] text-slate-500 leading-normal font-normal">
                                     Highlight and copy the finalized block generated by the feedback mirror prompt.
                                   </p>
                                 </div>
-                                <div className="bg-slate-50 border border-slate-150 p-3.5 rounded-xl space-y-1">
+                                <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl space-y-1">
                                   <span className="text-xs font-extrabold text-slate-800 flex items-center gap-1.5">
                                     <span className="bg-slate-200 text-slate-700 text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold">2</span>
                                     Edit Gem settings
                                   </span>
-                                  <p className="text-[10px] text-slate-500 leading-normal">
-                                    Head back to your Gems dashboard configuration and hit "Edit Gem" for your active companion.
+                                  <p className="text-[10px] text-slate-500 leading-normal font-normal">
+                                    Navigate to the Gems dashboard and select "Edit Gem" for the active companion.
                                   </p>
                                 </div>
-                                <div className="bg-slate-50 border border-slate-150 p-3.5 rounded-xl space-y-1">
+                                <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl space-y-1">
                                   <span className="text-xs font-extrabold text-slate-800 flex items-center gap-1.5">
                                     <span className="bg-slate-200 text-slate-700 text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold">3</span>
                                     Paste code rule
                                   </span>
-                                  <p className="text-[10px] text-slate-500 leading-normal">
+                                  <p className="text-[10px] text-slate-500 leading-normal font-normal">
                                     Paste it right into the Instructions box to lock in that strategic behavior forever.
                                   </p>
                                 </div>
@@ -2335,42 +2424,42 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                       <span className="text-purple-600">🪄</span> 2. Generate Multi-Page Slides in Slides App
                     </h3>
                     <p className="text-xs text-slate-600 leading-relaxed font-normal">
-                      Use the Gemini side-panel right inside your Google Slides file to build the pages organically:
+                      Use the Gemini side-panel right inside the Google Slides file to build presentation pages organically:
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-sans">
-                      <div className="bg-white border border-slate-150 p-5 rounded-2xl relative space-y-3 shadow-xs">
+                      <div className="bg-white border border-slate-200 p-5 rounded-2xl relative space-y-3 shadow-xs">
                         <div className="text-[9px] font-bold text-slate-400 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md font-mono w-max">
                           SLIDES STEP 1
                         </div>
                         <div className="space-y-1">
                           <h4 className="font-bold text-slate-800 text-xs">Open Ask Gemini</h4>
                           <p className="text-[11px] text-slate-500 leading-relaxed font-sans font-normal">
-                            Click the <strong>Ask Gemini</strong> star button in the top-right toolbar within your Google Slides project.
+                            Select the <strong>Ask Gemini</strong> star button in the top-right toolbar within the Google Slides project.
                           </p>
                         </div>
                       </div>
 
-                      <div className="bg-white border border-slate-150 p-5 rounded-2xl relative space-y-3 shadow-xs">
+                      <div className="bg-white border border-slate-200 p-5 rounded-2xl relative space-y-3 shadow-xs font-sans">
                         <div className="text-[9px] font-bold text-slate-400 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md font-mono w-max">
                           SLIDES STEP 2
                         </div>
-                        <div className="space-y-1">
-                          <h4 className="font-bold text-slate-800 text-xs">Formulate Slide Command</h4>
+                        <div className="space-y-1 font-sans">
+                          <h4 className="font-bold text-slate-800 text-xs font-sans">Bridge the Outline</h4>
                           <p className="text-[11px] text-slate-500 leading-relaxed font-sans font-normal">
-                            Ask Gemini to create the multi-page structure. Input your Slide Command combining copy parameters and structural rules.
+                            Direct Gemini using the outline output from Step 1 by pasting it directly into the Slides Gemini sidebar to generate the page layouts.
                           </p>
                         </div>
                       </div>
 
-                      <div className="bg-white border border-slate-150 p-5 rounded-2xl relative space-y-3 shadow-xs">
+                      <div className="bg-white border border-slate-200 p-5 rounded-2xl relative space-y-3 shadow-xs font-sans">
                         <div className="text-[9px] font-bold text-slate-400 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md font-mono w-max">
                           SLIDES STEP 3
                         </div>
-                        <div className="space-y-1">
-                          <h4 className="font-bold text-slate-800 text-xs">Build slides natively</h4>
+                        <div className="space-y-1 font-sans">
+                          <h4 className="font-bold text-slate-800 text-xs font-sans">Build slides natively</h4>
                           <p className="text-[11px] text-slate-500 leading-relaxed font-sans font-normal">
-                            Gemini inserts the slides into your current deck, preserving the master elements, formatting, and fonts setup.
+                            Gemini processes the outline and inserts presentation pages directly into the active file, maintaining active theme masters, layout geometry, and loaded brand typography.
                           </p>
                         </div>
                       </div>
@@ -2379,19 +2468,19 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                     {/* Slides App Command Box */}
                     <div className="space-y-2">
                       <div className="flex justify-between items-center bg-[#090d16] px-4 py-2.5 rounded-t-xl border-b border-[#1f2937]">
-                        <span className="text-[10px] font-mono font-bold text-emerald-400 tracking-wider uppercase">
-                          📋 Step 2: Google Slides Side-Panel Command
+                        <span className="text-[10px] font-mono font-bold text-emerald-400 tracking-wider uppercase font-mono">
+                          📋 Step 2: Google Slides Side-Panel Command Bridge
                         </span>
                         <button
-                          onClick={() => handleCopy(SLIDES_APP_GEMINI_PROMPT, 'slidesAppPrompt')}
-                          className="bg-white/5 border border-white/10 hover:border-emerald-400 flex items-center gap-1.5 text-white px-3 py-1 rounded-md text-[10px] font-bold cursor-pointer transition-all active:scale-95 hover:bg-white/10"
+                          onClick={() => handleCopy(SLIDES_APP_BRIDGE_TEMPLATE, 'slidesAppBridgePrompt')}
+                          className="bg-white/5 border border-white/10 hover:border-emerald-400 flex items-center gap-1.5 text-white px-3 py-1 rounded-md text-[10px] font-bold cursor-pointer transition-all active:scale-95 hover:bg-white/10 font-sans"
                         >
-                          {copiedId === 'slidesAppPrompt' ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-emerald-400" />}
-                          {copiedId === 'slidesAppPrompt' ? "Copied!" : "Copy Prompt"}
+                          {copiedId === 'slidesAppBridgePrompt' ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-emerald-400" />}
+                          {copiedId === 'slidesAppBridgePrompt' ? "Copied!" : "Copy Command"}
                         </button>
                       </div>
-                      <pre className="p-4 bg-slate-900 border border-slate-800 rounded-b-xl font-mono text-xs text-[#cbd5e1] leading-relaxed max-h-[180px] overflow-y-auto whitespace-pre-wrap select-all">
-                        {SLIDES_APP_GEMINI_PROMPT}
+                      <pre className="p-4 bg-slate-900 border border-slate-800 rounded-b-xl font-mono text-xs text-[#cbd5e1] leading-relaxed max-h-[180px] overflow-y-auto whitespace-pre-wrap select-all font-mono">
+                        {SLIDES_APP_BRIDGE_TEMPLATE}
                       </pre>
                     </div>
                   </div>
@@ -2408,7 +2497,7 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                     <ul className="text-xs text-slate-600 pl-5 list-disc space-y-2.5 font-normal">
                       <li className="leading-relaxed"><strong>Rearrange layout:</strong> If elements feel congested, select the slide, click <strong>Layout</strong> in the main Google Slides toolbar, and swap the styling block to an approved corporate master pattern.</li>
                       <li className="leading-relaxed"><strong>Sync Accent Shapes:</strong> Convert standard white container boxes or shapes into Approved Theme Colors by clicking the shape and selecting official palette presets.</li>
-                      <li className="leading-relaxed"><strong>Typography Refinement:</strong> Highlight headings or labels and change size, bold weights, or spacing values manually using your loaded Google-approved brand fonts.</li>
+                      <li className="leading-relaxed"><strong>Typography Refinement:</strong> Highlight headings or labels and change size, bold weights, or spacing values manually using loaded Google-approved brand fonts.</li>
                     </ul>
 
                     <div className="bg-[#fcf8ff] border border-purple-100 rounded-2xl p-5 space-y-1.5 shadow-xs">
@@ -2416,8 +2505,36 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                         💡 Key Takeaway: The Hybrid Human-in-the-Loop Workflow
                       </span>
                       <p className="text-slate-600 leading-relaxed text-xs font-normal">
-                        Leveraging Gemini to write precision layouts, outline slide flow, and insert initial structures saves hours of builder time. Handing off slide details for quick manual stylistic adjustments keeps your brand perfectly preserved and safe.
+                        Leveraging Gemini to write precision layouts, outline slide flow, and insert initial structures saves hours of builder time. Handing off slide details for quick manual stylistic adjustments keeps branding assets perfectly preserved and formatted.
                       </p>
+                    </div>
+
+                    {/* Multi-Slide Generation Disclaimer */}
+                    <div className="bg-[#f8fafc] border border-slate-200 rounded-2xl p-5 space-y-3 shadow-xs font-sans">
+                      <span className="font-extrabold text-slate-800 flex items-center gap-1.5 text-xs">
+                        ⚠️ Important Disclaimer: Multi-Slide Deck Generation & Usage Limits
+                      </span>
+                      <p className="text-slate-600 leading-relaxed text-xs font-normal">
+                        When generating a 5-slide deck, different entry points or feature paths may be triggered. Several structural factors control this behavior:
+                      </p>
+                      <div className="space-y-3 pl-4 text-xs">
+                        <div className="space-y-1">
+                          <p className="text-slate-700 font-extrabold leading-normal">
+                            ✨ The "Create Entire Deck" Feature:
+                          </p>
+                          <p className="text-slate-600 leading-relaxed font-normal">
+                            Google has rolled out capabilities to generate full presentation outlines and multi-slide decks, but this is often restricted by account tiers (like AI Expanded Access, Gemini Enterprise, or Workspace Experiments tokens).
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-slate-700 font-extrabold leading-normal">
+                            ⚡ Daily Usage/Token Limits:
+                          </p>
+                          <p className="text-slate-600 leading-relaxed font-normal">
+                            Multi-slide generation is incredibly resource-heavy. Google places daily "high-velocity" tier limits on accounts. Once a certain threshold of intensive usage is exceeded, the system temporarily moderates capability back to the baseline "one slide at a time" model until quotas reset.
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -2427,10 +2544,10 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                       <span className="text-purple-600">🎥</span> 4. Transform Slides into Google Vids with AI Voiceover & Avatar
                     </h3>
                     <p className="text-xs text-slate-600 leading-relaxed font-normal">
-                      Ready to scale up your static slides? Convert your corporate master deck into a highly professional video presentation natively in Google Workspace:
+                      Static slides can be transformed into highly professional video presentations native to Google Workspace:
                     </p>
 
-                    <div className="bg-gradient-to-br from-indigo-50/70 via-purple-50/40 to-white border border-purple-150 p-5 rounded-2xl space-y-4 shadow-xs">
+                    <div className="bg-gradient-to-br from-indigo-50/70 via-purple-50/40 to-white border border-purple-200 p-5 rounded-2xl space-y-4 shadow-xs">
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <div className="space-y-1">
                           <span className="bg-purple-100 text-purple-700 text-[9px] font-bold px-2 py-0.5 rounded tracking-wider uppercase font-sans">
@@ -2464,7 +2581,7 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                         <div className="space-y-1">
                           <span className="text-[10px] font-extrabold text-indigo-700 uppercase tracking-wider block">👤 Realistic AI Avatars</span>
                           <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
-                            Spawn high-fidelity virtual presenters in one click. Place a digital talking head directly onto your slide layers to handle complex pitch deliveries seamlessly.
+                            Deploy high-fidelity virtual presenters with one click. Overlay digital presenter modules directly onto slide layers to deliver complex presentations smoothly.
                           </p>
                         </div>
                       </div>
@@ -2541,12 +2658,27 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                     </pre>
                   </div>
 
-                  <div className="bg-purple-50 border border-purple-200 text-purple-800 p-5 rounded-xl text-xs md:text-sm">
-                    <strong>🏃‍♂️ Operational Lab Assignment (25 Minutes):</strong> Access{' '}
-                    <a href="https://notebooklm.google.com" target="_blank" rel="noopener noreferrer" className="text-google-blue font-bold underline hover:text-blue-700">
-                      notebooklm.google.com
-                    </a>{' '}
-                    , mount Asset D as an independent text anchor source, and leverage the structural guide parameters to extract interactive glossaries and validation systems.
+                  <div className="bg-[#eff6ff] border border-blue-200 text-[#1e40af] p-5 rounded-xl text-xs md:text-sm space-y-3 font-sans">
+                    <p>
+                      <strong>🏃‍♂️ Operational Lab Assignment (25 Minutes):</strong> Access{' '}
+                      <a href="https://notebooklm.google.com" target="_blank" rel="noopener noreferrer" className="text-google-blue font-extrabold underline hover:text-blue-700">
+                        notebooklm.google.com
+                      </a>.
+                    </p>
+                    <div className="bg-white/70 p-3 rounded-lg border border-blue-100 flex items-start gap-2.5 text-slate-700">
+                      <span className="text-base leading-none">⚠️</span>
+                      <div className="space-y-1">
+                        <p className="font-extrabold text-[#1e3a8a] text-[12px] uppercase tracking-wider">
+                          Critical Source of Truth Setup Required
+                        </p>
+                        <p className="leading-relaxed text-[11px] text-slate-600 font-normal">
+                          For NotebookLM to provide accurate, grounded insights without hallucinating, you must first upload all relevant files (e.g. Asset D below, along with other onboarding PDFs, docs, or URLs) directly to the sidebar Sources Panel inside your notebook.
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-slate-600 text-xs">
+                      Mount Asset D as your starting text anchor source, and leverage structural guide parameters to extract interactive glossaries and validation systems natively.
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -2586,10 +2718,10 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                       VOICEOVER WORKFLOW & TEXT-TO-SPEECH
                     </span>
                     <h3 className="text-sm font-extrabold text-slate-800">
-                      Vids — Is it possible to change the voiceover to another voice instead of mine?
+                      How to build and customize video presentations with AI voiceover scripts in Google Vids
                     </h3>
                     <p className="text-slate-600 leading-relaxed text-xs">
-                      Yes, absolutely! You do not have to use your own voice at all. Google Vids has a built-in text-to-speech feature powered by Gemini that lets you generate highly realistic, expressive AI voiceovers instead. You just type or paste your script, and Google Vids will read it out loud.
+                      Google Vids is an enterprise-grade AI-powered video creation assistant. Teams can rapidly compile videos by uploading custom media, auto-converting existing Google Slides decks into a video timeline, generating draft video storyboards with templates, or utilizing digital talking avatars. For narration, Vids eliminates manual recording constraints by providing built-in, highly expressive Text-to-Speech (TTS) voices that instantly synchronize with your scene scripts.
                     </p>
                   </div>
 
@@ -2599,43 +2731,43 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                       🎬 How to use an AI Voiceover in Google Vids
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 font-sans text-xs">
-                      <div className="bg-white border border-slate-150 p-4 rounded-xl space-y-1 relative">
+                      <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-1 relative">
                         <span className="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
                           <span className="bg-purple-100 text-purple-700 text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold">1</span>
                           Open Panel
                         </span>
                         <p className="text-[10px] text-slate-500 leading-relaxed font-normal">
-                          Open your video project and look at the right-hand panel.
+                          Open the video project and refer to the right-hand panel.
                         </p>
                       </div>
 
-                      <div className="bg-white border border-slate-150 p-4 rounded-xl space-y-1 relative">
+                      <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-1 relative">
                         <span className="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
                           <span className="bg-purple-100 text-purple-700 text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold">2</span>
                           Voiceover Icon
                         </span>
                         <p className="text-[10px] text-slate-500 leading-relaxed font-normal">
-                          Click on the <strong>Voiceover</strong> icon in the actions panel.
+                          Select the <strong>Voiceover</strong> icon in the actions panel.
                         </p>
                       </div>
 
-                      <div className="bg-white border border-slate-150 p-4 rounded-xl space-y-1 relative">
+                      <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-1 relative">
                         <span className="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
                           <span className="bg-purple-100 text-purple-700 text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold">3</span>
                           Set Scope
                         </span>
                         <p className="text-[10px] text-slate-500 leading-relaxed font-normal">
-                          Choose whether you want to apply it to the <strong>Current scene</strong> or <strong>All scenes</strong>.
+                          Choose whether to apply it to the <strong>Current scene</strong> or <strong>All scenes</strong>.
                         </p>
                       </div>
 
-                      <div className="bg-white border border-slate-150 p-4 rounded-xl space-y-1 relative">
+                      <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-1 relative">
                         <span className="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 font-sans">
                           <span className="bg-purple-100 text-purple-700 text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold">4</span>
                           Script & Voice
                         </span>
                         <p className="text-[10px] text-slate-500 leading-relaxed font-normal">
-                          Type or paste your text into the script box (up to 2,500 characters per scene) and choose your preferred AI voice under the script box.
+                          Input text into the script box (up to 2,500 characters per scene) and select the preferred AI voice located below the input area.
                         </p>
                       </div>
                     </div>
@@ -2670,7 +2802,7 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                             timing: "0:00 - 0:05",
                             visuals: "A split screen. On the left, a frustrated traveler staring at a laptop. On the right, a hotel front desk receptionist overwhelmed with phone calls and paperwork.",
                             tone: "Explainer or Narrator (Professional, slightly concerned tone)",
-                            script: "In the hospitality industry, communication bottlenecks cost time and revenue. Guests want instant answers, but your front desk team can only handle so many calls at once.",
+                            script: "In the hospitality industry, communication bottlenecks cost time and revenue. Guests want instant answers, but front desk teams can only handle a limited volume of calls concurrently.",
                             id: "vidsScene1"
                           },
                           {
@@ -2678,7 +2810,7 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                             timing: "0:05 - 0:12",
                             visuals: "Smooth transition to a smartphone screen displaying a beautiful hotel website. A friendly HiJiffy chat widget pops up at the bottom right corner.",
                             tone: "Persuader (Upbeat, confident)",
-                            script: "[Read this with an enthusiastic tone]: Meet HiJiffy. Our Conversational AI platform integrates seamlessly across your website, WhatsApp, and social media to provide instant, 24/7 guest support.",
+                            script: "[Read this with an enthusiastic tone]: Meet HiJiffy. The Conversational AI platform integrates seamlessly across the hotel's website, WhatsApp, and social media to provide instant, 24/7 guest support.",
                             id: "vidsScene2"
                           },
                           {
@@ -2686,7 +2818,7 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                             timing: "0:12 - 0:22",
                             visuals: "Close-up of the smartphone screen. The AI chatbot quickly answers a guest's question about parking availability and automatically sends a direct booking link. The user clicks it.",
                             tone: "Educator (Clear, instructional)",
-                            script: "From answering FAQs about amenities to driving direct bookings, HiJiffy guides your guests through a personalized booking funnel [pause] without requiring human intervention.",
+                            script: "From answering FAQs about amenities to driving direct bookings, HiJiffy guides guests through a personalized booking funnel [pause] without requiring human intervention.",
                             id: "vidsScene3"
                           },
                           {
@@ -2694,7 +2826,7 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                             timing: "0:22 - 0:32",
                             visuals: "The guest is now seen walking into a hotel lobby. They receive a WhatsApp notification powered by HiJiffy: \"Welcome! Tap here to complete your digital check-in or request extra towels.\" A click of a button instantly alerts the housekeeping backend dashboard.",
                             tone: "Coach / Motivator (Dynamic, forward-thinking)",
-                            script: "Once they arrive, automate digital check-ins, up-sell room upgrades, and handle guest requests instantly. Your staff only steps in when a human touch is truly needed.",
+                            script: "Once they arrive, automate digital check-ins, up-sell room upgrades, and handle guest requests instantly. Staff members enter the workflow only when human touchpoints are required.",
                             id: "vidsScene4"
                           },
                           {
@@ -2706,8 +2838,8 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                             id: "vidsScene5"
                           }
                         ].map((item) => (
-                          <div key={item.id} className="bg-white border border-slate-150 rounded-xl overflow-hidden shadow-xs">
-                            <div className="bg-slate-50 border-b border-slate-150 px-4 py-2.5 flex justify-between items-center flex-wrap gap-2">
+                          <div key={item.id} className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+                            <div className="bg-slate-50 border-b border-slate-200 px-4 py-2.5 flex justify-between items-center flex-wrap gap-2">
                               <div className="flex items-center gap-2">
                                 <span className="bg-google-blue/10 text-google-blue text-[10px] px-2 py-0.5 rounded font-bold font-mono">
                                   {item.timing}
@@ -2748,6 +2880,302 @@ Slide 5: Expected Impact. Bullets: "Reduce work time by 20%", "Boost direct-book
                     </div>
 
 
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* MODULE 5: DEEP WIKI INTEGRATION & CONFLUENCE SYNC */}
+        <div id="confluence-sync-section" className={cn("bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300", openSection === 5 ? "border-google-blue/40 shadow-lg shadow-google-blue/5" : "hover:border-slate-300 shadow-xs")}>
+          <button 
+            onClick={() => toggleAccordion(5)}
+            className="w-full p-6 text-left flex justify-between items-center transition-colors hover:bg-slate-50/50"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xl bg-google-blue/10 text-google-blue">
+                🔄
+              </div>
+              <span className="font-bold text-base md:text-lg text-slate-800">
+                5. Advanced Confluence & Wiki Synchronization Use Cases
+              </span>
+            </div>
+            <ChevronDown className={cn("w-5 h-5 text-slate-400 transition-transform duration-300", openSection === 5 && "transform rotate-180 text-google-blue")} />
+          </button>
+          
+          <AnimatePresence initial={false}>
+            {openSection === 5 && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden border-t border-slate-200/50 bg-slate-50/30 font-sans text-xs"
+              >
+                <div className="p-6 space-y-6">
+                  <div className="space-y-3">
+                    <span className="bg-google-blue/10 text-google-blue text-[10px] font-bold px-2 py-0.5 rounded tracking-wider uppercase">
+                      EXTERNAL REPOSTORY COUPLING & DYNAMIC SOURCES
+                    </span>
+                    <h3 className="text-sm font-extrabold text-slate-800">
+                      🛡️ Deep Wiki Integration: Connecting Confluence Pages directly to Gems
+                    </h3>
+                    <p className="text-slate-600 leading-relaxed text-xs">
+                      Keep your anchored Gem sources dynamic by automatically feeding other corporate repositories (like Confluence) into Google Docs pipelines:
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* USE CASE 1 */}
+                    <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-2.5 shadow-xs hover:border-slate-300 transition-colors flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <span className="text-[9px] font-extrabold text-google-blue uppercase tracking-wider block bg-slate-100 px-2 py-0.5 rounded w-max">ROUTE 1</span>
+                        <h5 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                          🔄 The Automation Route: No-Code Sync Tools
+                        </h5>
+                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                          If you want a Google Doc to automatically update its text whenever a Confluence page changes, use an automation workflow platform like <strong>Make.com</strong>, <strong>Zapier</strong>, or <strong>n8n</strong>.
+                        </p>
+                        <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-[10px] space-y-1 text-slate-600 font-sans">
+                          <p className="font-bold text-slate-700">Two-Step Rule Setup:</p>
+                          <p>• <strong>Trigger:</strong> When a page is updated in Confluence.</p>
+                          <p>• <strong>Action:</strong> Update/Append text in a specific Google Doc.</p>
+                        </div>
+                      </div>
+                      <p className="text-[10px] text-slate-400 italic font-normal leading-normal pt-2 border-t border-slate-100 font-sans">
+                        Because the Google Doc is dynamically updated by the automation, any Gem pinned to that specific Doc will always read the most current, live information automatically.
+                      </p>
+                    </div>
+
+                    {/* USE CASE 2 */}
+                    <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-2.5 shadow-xs hover:border-slate-300 transition-colors flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <span className="text-[9px] font-extrabold text-google-blue uppercase tracking-wider block bg-slate-100 px-2 py-0.5 rounded w-max">ROUTE 2</span>
+                        <h5 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                          ☁️ The Google Cloud Route: Enterprise Connectors
+                        </h5>
+                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal font-sans">
+                          For organizations utilizing enterprise environments, administrators can configure <strong>Google Cloud Integration Connectors</strong> to manage structured data feeds.
+                        </p>
+                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal p-2.5 bg-slate-50 border border-slate-200 rounded-lg font-sans">
+                          Google provides a dedicated native connector for Confluence, which programmatically couples Confluence spaces directly to Google Workspace data pipelines. Once configured, data flows automatically into Google Docs or BigQuery, making it securely accessible to enterprise Gemini instances.
+                        </p>
+                      </div>
+                      <p className="text-[10px] text-slate-400 italic font-normal leading-normal pt-2 border-t border-slate-100 font-sans">
+                        Maintains native workspace safety compliance.
+                      </p>
+                    </div>
+
+                    {/* USE CASE 3 */}
+                    <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-2.5 shadow-xs hover:border-slate-300 transition-colors flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <span className="text-[9px] font-extrabold text-google-blue uppercase tracking-wider block bg-slate-100 px-2 py-0.5 rounded w-max">ROUTE 3</span>
+                        <h5 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                          📌 The Quick Reference Route: Atlassian Smart Chips
+                        </h5>
+                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal font-sans">
+                          If full text replication is not required, <strong>Atlassian Smart Chips</strong> can be utilized to make the resources recognizable within the document directory.
+                        </p>
+                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal p-2.5 bg-slate-50 border border-slate-200 rounded-lg font-sans">
+                          Installing the Atlassian extension from the Google Workspace Marketplace allows pasted Confluence URLs inside a Google Doc to transform into "Smart Chips" showing metadata. While the full article content is not imported directly, this approach enables the file to act as an organized index for the Gemini workspace.
+                        </p>
+                      </div>
+                      <p className="text-[10px] text-slate-400 italic font-normal leading-normal pt-2 border-t border-slate-100 font-sans">
+                        Saves manual layout and links organization efforts.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* SUMMARY REC BLOCK */}
+                  <div className="p-4 bg-blue-50/50 border border-blue-200 rounded-xl space-y-1">
+                    <span className="text-xs font-extrabold text-blue-950 flex items-center gap-1">
+                      🎯 Summary Recommendation
+                    </span>
+                    <p className="text-[11px] text-slate-600 leading-relaxed font-normal font-sans">
+                      For establishing a dynamic knowledge source, configuring a <strong>Make</strong> or <strong>Zapier</strong> synchronization to output the Confluence text into a designated Google Doc remains the primary recommendation.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* MODULE 6: STUDIO AI AUTOMATION: LEAD RESPONDER LOOP */}
+        <div id="studio-automation-section" className={cn("bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300", openSection === 6 ? "border-[#059669]/40 shadow-lg shadow-[#059669]/5" : "hover:border-slate-300 shadow-xs")}>
+          <button 
+            onClick={() => toggleAccordion(6)}
+            className="w-full p-6 text-left flex justify-between items-center transition-colors hover:bg-slate-50/50"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xl bg-[#059669]/10 text-[#059669]">
+                🤖
+              </div>
+              <span className="font-bold text-base md:text-lg text-slate-800">
+                6. Studio AI Automation: Intelligent Lead Responder Loop
+              </span>
+            </div>
+            <ChevronDown className={cn("w-5 h-5 text-slate-400 transition-transform duration-300", openSection === 6 && "transform rotate-180 text-emerald-600")} />
+          </button>
+          
+          <AnimatePresence initial={false}>
+            {openSection === 6 && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden border-t border-slate-200/50 bg-slate-50/30 font-sans text-xs"
+              >
+                <div className="p-6 space-y-6">
+                  <div className="space-y-3">
+                    <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded tracking-wider uppercase">
+                      STUDIO WORKFLOW INTEGRATION
+                    </span>
+                    <h3 className="text-sm font-extrabold text-slate-800">
+                      🤖 Intelligent Lead Categorization & CRM Pipeline Blueprint
+                    </h3>
+                    <p className="text-slate-600 leading-relaxed text-xs">
+                      Configure the Studio automation workflow to monitor incoming queues, parse key metadata variables, evaluate context decisions using Gemini, and output B2B SaaS compliant outcomes.
+                    </p>
+                  </div>
+
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-4">
+                    <p className="text-xs text-slate-600 leading-relaxed font-sans">
+                      Based on the Studio automation blueprint, here are the specific step-by-step configuration instructions to execute this exact workflow:
+                    </p>
+
+                    <ol className="text-xs text-slate-600 space-y-4">
+                      {/* Step 1 */}
+                      <li className="bg-white p-4 border border-slate-200 rounded-xl space-y-2.5">
+                        <span className="font-extrabold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                          <span className="w-5 h-5 rounded-full bg-google-blue/10 text-google-blue flex items-center justify-center text-[10px]">1</span>
+                          Step 1: Inbound Email Monitoring (Trigger)
+                        </span>
+                        <p className="text-[11px] text-slate-500 leading-normal pl-6 font-normal">
+                          This step monitors the inbox for incoming lead or client emails.
+                        </p>
+                        <div className="pl-6 space-y-1 text-[11px] text-slate-600 leading-normal font-sans">
+                          <div>• <strong>Trigger Type:</strong> Select Specific emails.</div>
+                          <div>• <strong>From:</strong> (Optional) Leave blank to monitor all incoming domains, or specify a CRM routing address.</div>
+                          <div>• <strong>Has the words:</strong> Enter keywords to filter for relevant sales leads or specific target accounts (e.g., <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-[10px]">booking, direct bookings, hotel, occupancy, OTA</code>).</div>
+                        </div>
+                      </li>
+
+                      {/* Step 2 */}
+                      <li className="bg-white p-4 border border-slate-200 rounded-xl space-y-2.5">
+                        <span className="font-extrabold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                          <span className="w-5 h-5 rounded-full bg-google-blue/10 text-google-blue flex items-center justify-center text-[10px]">2</span>
+                          Step 2: Decide (Logic Filter)
+                        </span>
+                        <p className="text-[11px] text-slate-500 leading-normal pl-6 font-normal">
+                          This step acts as a guardrail to ensure the workflow only runs if the email contains a valid sales opportunity.
+                        </p>
+                        <div className="pl-6 space-y-1 text-[11px] text-slate-600 leading-normal font-sans">
+                          <div>• <strong>Condition:</strong> Configure the rule to check if the incoming email body contains actionable business data.</div>
+                          <div>• <strong>Rule Setup:</strong> Set <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-[10px]">{"Step 1: Email Body -> Contains -> keywords matching hotel operations or pain points"}</code> (e.g., <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-[10px]">{"PMS, channel manager, front desk, OTA, commission, workload, response time"}</code>).</div>
+                        </div>
+                      </li>
+
+                      {/* Step 3 */}
+                      <li className="bg-white p-4 border border-slate-200 rounded-xl space-y-2.5">
+                        <span className="font-extrabold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                          <span className="w-5 h-5 rounded-full bg-google-blue/10 text-google-blue flex items-center justify-center text-[10px]">3</span>
+                          Step 3: Check if Step 2: Decision is true (Conditional Branch)
+                        </span>
+                        <p className="text-[11px] text-slate-500 leading-normal pl-6 font-normal">
+                          This is a native structural step created by the platform automatically when a decision logic branch is added.
+                        </p>
+                        <div className="pl-6 space-y-1 text-[11px] text-slate-600 leading-normal font-sans">
+                          <div>• <strong>Configuration:</strong> No manual text entry is required here. Succeeded actions (Step 4 through Step 6) must be nested directly underneath the 'True' path of this branch.</div>
+                        </div>
+                      </li>
+
+                      {/* Step 4 */}
+                      <li className="bg-white p-4 border border-slate-200 rounded-xl space-y-2.5">
+                        <span className="font-extrabold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                          <span className="w-5 h-5 rounded-full bg-google-blue/10 text-google-blue flex items-center justify-center text-[10px]">4</span>
+                          Step 4: Extract (Data Parsing)
+                        </span>
+                        <p className="text-[11px] text-slate-500 leading-normal pl-6 font-normal">
+                          Before sending data to Gemini, this step isolates clean contact variables from the email metadata.
+                        </p>
+                        <div className="pl-6 space-y-1 text-[11px] text-slate-600 leading-normal font-sans">
+                          <div>• Map Sender Email Address to variable: <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-[10px]">{"{{client_email}}"}</code></div>
+                          <div>• Map Sender Name / Signature to parse the contact name.</div>
+                          <div>• Map Company Name to variable: <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-[10px]">{"{{hotel_name}}"}</code> to extract the hotel property or management group name.</div>
+                        </div>
+                      </li>
+
+                      {/* Step 5 */}
+                      <li className="bg-white p-4 border border-slate-200 rounded-xl space-y-2.5">
+                        <span className="font-extrabold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                          <span className="w-5 h-5 rounded-full bg-google-blue/10 text-google-blue flex items-center justify-center text-[10px]">5</span>
+                          Step 5: Ask Gemini (AI Processing)
+                        </span>
+                        <p className="text-[11px] text-slate-500 leading-normal pl-6 font-semibold shadow-xs">
+                          This is the core engine where customized sales personas, constraints, and dual-output formats are defined. The text below can be copied and pasted directly into the prompt field:
+                        </p>
+                        <div className="pl-6 space-y-2 pt-2">
+                          <div className="flex justify-between items-center bg-[#090d16] px-4 py-2.5 rounded-t-xl border-b border-[#1f2937]">
+                            <span className="text-[10px] font-mono font-bold text-emerald-400 tracking-wider uppercase font-mono">
+                              🤖 Ask Gemini step prompt template
+                            </span>
+                            <button
+                              onClick={() => handleCopy(STUDIO_AUTOMATION_GEMINI_PROMPT, 'studioAutomationPrompt')}
+                              className="bg-white/5 border border-white/10 hover:border-emerald-400 flex items-center gap-1.5 text-white px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all active:scale-95 whitespace-nowrap hover:bg-white/10 font-sans"
+                            >
+                              {copiedId === 'studioAutomationPrompt' ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 animate-pulse" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
+                              {copiedId === 'studioAutomationPrompt' ? "Copied!" : "Copy Prompt Text"}
+                            </button>
+                          </div>
+                          <pre className="p-4 bg-slate-900 border border-slate-800 rounded-b-xl font-mono text-xs text-[#cbd5e1] leading-relaxed max-h-[300px] overflow-y-auto whitespace-pre-wrap select-all bg-[#030712]/40 font-mono">
+                            {STUDIO_AUTOMATION_GEMINI_PROMPT}
+                          </pre>
+                        </div>
+                      </li>
+
+                      {/* Step 6 */}
+                      <li className="bg-white p-4 border border-slate-200 rounded-xl space-y-2.5">
+                        <span className="font-extrabold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                          <span className="w-5 h-5 rounded-full bg-google-blue/10 text-google-blue flex items-center justify-center text-[10px]">6</span>
+                          Step 6: Draft a reply (Action/Output)
+                        </span>
+                        <p className="text-[11px] text-slate-500 leading-normal pl-6 font-sans">
+                          This step maps the AI's generated response into a ready-to-use email format.
+                        </p>
+                        <div className="pl-6 space-y-1 text-[11px] text-slate-600 leading-normal font-sans">
+                          <div>• <strong>To:</strong> Map to the variable <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-[10px]">{"{{client_email}}"}</code> captured in Step 4.</div>
+                          <div>• <strong>Subject Line:</strong> Set to <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-[10px]">Re: {"{{Step 1: Email Subject}}"}</code> or create a personalized subject line like <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-[10px]">HiJiffy x {"{{hotel_name}}"}</code>.</div>
+                          <div>• <strong>Body:</strong> Map this to extract only <code className="bg-slate-100 px-1 font-mono text-[10px]">{"[OUTPUT 2]"}</code> from Step 5.</div>
+                          <div className="text-slate-400 italic pt-1 text-[10.5px]">💡 Note on HubSpot: An additional substep can be added directly after this to log <code className="bg-slate-100 px-1 font-mono text-[10px]">{"[OUTPUT 1]"}</code> directly into the CRM timeline for the contact.</div>
+                        </div>
+                      </li>
+
+                      {/* Step 7 */}
+                      <li className="bg-white p-4 border border-slate-200 rounded-xl space-y-2.5">
+                        <span className="font-extrabold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                          <span className="w-5 h-5 rounded-full bg-google-blue/10 text-google-blue flex items-center justify-center text-[10px]">7</span>
+                          Step 7: Notify Google Chat (Broadcast Alert)
+                        </span>
+                        <p className="text-[11px] text-slate-500 leading-normal pl-6 font-sans font-normal">
+                          Send a real-time notification to the team's Google Chat space to alert everyone that a personalized lead draft is prepared and logged.
+                        </p>
+                        <div className="pl-6 space-y-2.5 text-[11px] text-slate-600 leading-normal font-sans">
+                          <div>• <strong>Action Type:</strong> Select <strong>Send a message in Google Chat</strong>.</div>
+                          <div>• <strong>Space:</strong> Choose your target Chat Space (e.g., <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-[10px]">#sales-alerts</code> or <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-[10px]">#operations</code>).</div>
+                          <div>• <strong>Message Text:</strong> Enter a custom status update utilizing mapped variables:
+                            <pre className="mt-1.5 p-2.5 bg-slate-800 text-[#34d399] font-mono rounded text-[10px] leading-relaxed max-w-full overflow-x-auto whitespace-pre-wrap select-all">
+                              {`🤖 *New Auto-Draft Generated!*
+• *Client Email:* {{client_email}}
+• *Property:* {{hotel_name}}
+• *Action:* AI email draft ready for review in CRM.`}
+                            </pre>
+                          </div>
+                        </div>
+                      </li>
+                    </ol>
                   </div>
                 </div>
               </motion.div>
@@ -2829,7 +3257,7 @@ Dr. Elena Rostova,Room 212,"The room thermostat is entirely broken. The heating 
         { id: "sl-3", text: "Copy the 'Enterprise Slides Brainstorm Draft' from our blueprint library below." },
         { id: "sl-4", text: "Paste the draft prompt into the Gemini Web App and run it to produce a pristine slide outline." },
         { id: "sl-5", text: "Back in Google Slides, click the sparkle Ask Gemini icon in the top toolbar to open the Sidebar." },
-        { id: "sl-6", text: "Copy the 'Sidebar Design Formula' blueprint, paste it into the Sidebar, and click on your favorite design suggestion." },
+        { id: "sl-6", text: "Copy the 'Slides Sidebar Bridging Command' from Blueprint B below, paste in your generated outline excerpt, and choose your favorite design." },
         { id: "sl-7", text: "Click the 'Insert Slide' button on the Sidebar to automatically compile the page onto your canvas—no code required!" }
       ],
       blueprintHeader1: "💡 Blueprint A: Gemini Web App Outline Brainstorm Prompt",
@@ -2840,56 +3268,114 @@ Format your output structure slide-by-slide as follows:
 - Slide 2: Situation & Friction Analysis (Using our B2B SPICED framework)
 - Slide 3: Proposed Solution Blueprint (Detailing automated onboarding)
 - Slide 4: Strategic ROI Impact (E.g. +34% reservation velocity)`,
-      blueprintHeader2: "🎨 Blueprint B: Slides In-App Sidebar Layout Formula",
-      blueprintData2: `Create a professional presentation slide introducing "Conversational AI Implementation".
-Use the following bullet points:
-- Zero Friction Onboarding: Seamless automated check-in pipeline
-- Saved Effort: Eliminates 12 minutes of average manual staff delay per customer
-- Brand Alignment: Maintains our luxury service standards
+      blueprintHeader2: "🎨 Blueprint B: Slides Sidebar Bridging Command Template",
+      blueprintData2: `Create a professional presentation slide based on this specific slide outline from our draft:
+
+Slide 2: Situation & Friction Analysis
+- Staff bottleneck: Peak hours cause delays
+- Client delay: Pre-arrival manual check-in takes 12 minutes
+- Resolution: Deploy guest self-service portal
 
 Provide a clean grid or column-based slide design.`
     },
     notebook: {
       title: "NotebookLM Deep Dive",
-      subtitle: "Eliminating Hallucinations with Grounded Manuals",
+      subtitle: "Eliminating Hallucinations with Grounded Manuals & Overviews",
       icon: BookOpen,
       color: "text-google-green bg-google-green/10",
-      description: "Discover how to isolate a model's knowledge exclusively to corporate manuals. If the facts are not in the uploaded pages, the AI will refuse to synthesize them—guaranteeing 0% hallucinations. Follow up by generating a custom podcast overview.",
+      description: "Discover how to isolate a model's knowledge exclusively to corporate manuals. Feed NotebookLM your core handbooks—company history, processes, tool setups, and security protocols—to prevent hallucinations and generate interactive Study Guides or Audio podcasts on-demand.",
       steps: [
-        { id: "nb-1", text: "Navigate to notebooklm.google.com and sign in with your Google Workspace credentials." },
-        { id: "nb-2", text: "Create a new Sandbox notebook called 'HiJiffy Operations Knowledge Center'." },
-        { id: "nb-3", text: "Under 'Add Sources', select 'Copied Text'. Copy the 'Brand Policy & VIP SOP' text below and paste it as a custom source." },
-        { id: "nb-4", text: "In the central chat panel, test its factual isolation by running 'Probing Question 1' or '2'. Watch it pull the perfect quote with precise page references." },
-        { id: "nb-5", text: "Now ask 'Probing Question 3' (which represents a typical ungrounded hallucination risk). Watch the system refuse to make up an answer, citing that it's outside the manual!" },
-        { id: "nb-6", text: "On the right menu, open the 'Notebook guide' and click 'Generate Audio Overview'. Wait 1-2 minutes to download a high-fidelity conversational audio summary of your hotel policies!" }
+        { id: "nb-1", text: "Upload all relevant materials (Document 1, 2, and 3 below) to the sidebar Sources Panel to establish your grounded source of truth." },
+        { id: "nb-2", text: "Explain how these uploaded sources isolate the virtual assistant's answers and eliminate hallucinations entirely." },
+        { id: "nb-3", text: "Demonstrate Instant Q&A: 'What tools do I need to get access to on my first day, and what should I do if I get locked out?'" },
+        { id: "nb-4", text: "Watch it parse across active documents simultaneously, returning precise inline citations linking back to original sources." },
+        { id: "nb-5", text: "Test brand alignment: 'What is HiJiffy's corporate stance on workspace autonomy, working hours, and remote-first culture?'" },
+        { id: "nb-6", text: "Open 'Notebook Guide' on the top right, configure the 'Audio Overview' summary, and play a short snippet of the generated conversation." }
       ],
-      blueprintHeader1: "🏨 Blueprint A: Copied Source (SOP-2026 Manual)",
-      blueprintData1: `======= HIJIFFY OFFICIAL HOSPITALITY STANDARD OPERATING PROCEDURES (SOP-2026) =======
+      blueprintHeader1: "📄 Blueprint A: Grounded Sources (3 HiJiffy Handbooks)",
+      blueprintData1: `=== DOCUMENT 1: hijiffy_company_overview.md ===
+# Welcome to HiJiffy: Company Overview & Culture
 
-[SECTION 1: ZERO-REFUSAL POLICY FOR ROOM UPGRADES]
-Our company operates strictly under the 'Guest First' pledge. Staff are given 100% decision autonomy for on-the-spot customer recoveries. If a guest experiences an Operational Defect (defined below), front-desk technicians must immediately offer a complimentary room upgrade (subject to availability) or a private wellness spa pass. Managers do NOT need to be contacted for authorization.
-* Operational Defects include: air conditioning breakdown, Wi-Fi outage lasting >1 hour, noise complaints due to building maintenance, or missed scheduled check-in window.
+## Our Mission
+Founded in 2016, HiJiffy is on a mission to make every guest interaction effortless, timely, and truly personal. We build the Guest Communications Hub for the hospitality industry, helping over 2,600 hotels in 60+ countries automate repetitive tasks, reduce front-desk workload, and increase direct booking revenue.
 
-[SECTION 2: CUSTOM SALES RATE STRUCTURES & PRIVILEGES]
-Negotiating with corporate reservation planners is subject to strict constraints:
-- For groups booking less than 15 total room-nights, never offer direct percentage discounts off room rates. This preserves premium brand margins. Instead, offer Complimentary Wellness Amenities (valued at up to $150 per guest), which include luxury gym access or gourmet room dining passes.
-- Groups booking 15+ room-nights may receive a maximum of 10% room discount, which must include a mandatory $50 resort fee per guest.
+## Our Core Products
+1. The Console: Our centralized omnichannel inbox where hotel staff can see messages from WhatsApp, Webchat, Facebook Messenger, Instagram, and OTAs (like Booking.com).
+2. Aplysia3: Our cutting-edge, proprietary conversational AI engine built specifically for hospitality. It uses Retrieval-Augmented Generation (RAG) to instantly answer guest queries using structured documents uploaded by hoteliers.
 
-[SECTION 3: BRAND COLOR & WRITING WORDS TO AVOID]
-To maintain a premium, consultative, and sophisticated brand positioning, certain transactional terms are strictly banned in all email correspondence:
-- NEVER use words like: 'cheap stay', 'discount code', 'cheap rate', or 'budget room'.
-- INSTEAD use high-end equivalents: 'exclusive rate privileges', 'special premium access', 'complimentary wellness retreat inclusion', or 'luxury sanctuary pricing'.
+## Our Culture & Ways of Working
+We are a highly international and remote-first team spread across Portugal, Spain, France, Germany, and the UK. Our main offices are located in Lisbon, Porto, and Barcelona, with corporate headquarters in Vidigueira. 
 
-======= END OF SOP-2026 MANUAL =======`,
-      blueprintHeader2: "🎯 Blueprint B: Probing Questions & Hallucination Solvers",
-      blueprintData2: `Question 1 (Exact Retrieval):
-"A guest in Room 202 suffered a major AC leak and missed breakfast. According to Section 1 of our SOP, what specific actions are staff authorized to take immediately?"
+As a team member, you are expected to:
+- Work Autonomously: We focus on impact and output, not hours spent at a desk.
+- Over-Communicate: Being remote means keeping your Slack status active and documenting processes transparently in Notion.
+- Stay Guest-Centric: Whether you are in Engineering, Sales, or Customer Success, our ultimate goal is improving the hotel guest experience.
 
-Question 2 (Strategic Guideline Negotiation):
-"An event organizer wants to book a 10-night stay for their team. They want a 15% discount on room prices. Can we offer this? What is our alternative brand policy?"
+=== DOCUMENT 2: internal_processes_and_tools.md ===
+# HiJiffy Internal Processes & Core Tools
 
-Question 3 (The Hallucination Trap):
-"What is our corporate refund policy if a guest's pet gets sick in our lobby cafe?"`
+## Communication & Collaboration
+- Slack: Our virtual office. Keep channels public whenever possible. Use \`#announcements\` for company-wide news, \`#product-updates\` for technical releases, and \`#random\` for socializing.
+- Notion: Our internal knowledge hub and source of truth. If a policy or guide is not in Notion, it doesn't exist.
+- Google Workspace: Used for email, calendar coordination, and collaborative docs.
+
+## Weekly Rituals
+- Monday Morning Kickoff (10:00 AM WET): A 30-minute sync where leadership shares company wide priorities for the week. Attendance is highly encouraged for all teams.
+- Friday Demo & Beers (5:00 PM WET): An informal space where engineering, product, or growth teams share what they built or won during the week. Grab a drink and join!
+
+## Time Off and Expenses
+- Holiday Policy: All full-time employees receive 22 to 25 days of paid annual leave depending on local labor laws. Request time off via the **Factorial** HR portal at least two weeks in advance.
+- Expenses: Any company-related expense (software licenses, travel, client dinners) must be submitted via **Spendesk** with an attached receipt before the 25th of the month.
+
+=== DOCUMENT 3: it_access_and_security.md ===
+# IT Access, Provisioning, and Security Protocols
+
+## Day 1 Access Setup
+Your manager will initiate your onboarding provisioning via our identity manager. Within your first 24 hours, expect invitations to:
+1. Google Workspace Account (yourname@hijiffy.com)
+2. Slack Workspace
+3. 1Password (Our Company Password Manager)
+
+## Password and Security Policy
+- Never share credentials via Slack DM. Use 1Password's secure sharing feature.
+- Multi-Factor Authentication (MFA) is strictly mandatory on all corporate accounts (Google, Slack, GitHub, HubSpot). Use Google Authenticator or 1Password for your 2FA tokens.
+- Device Security: Laptops must have hard drive encryption enabled (FileVault on Mac, BitLocker on Windows) and must be locked whenever you step away.
+
+## Getting Help
+If you encounter any lockouts or access issues, post a description of the problem in the \`#help-it-support\` Slack channel or tag the IT Ops team directly. Do not attempt to bypass security policies.`,
+      blueprintHeader2: "🎙️ Blueprint B: Step-by-Step Presentation Script",
+      blueprintData2: `🎙️ INTRODUCTION & OVERVIEW:
+"Hey team! To make onboarding faster, more personalized, and frankly, more fun for our new hires, I’ve built a dedicated HiJiffy Knowledge Space inside NotebookLM.
+Instead of sending a new hire into a maze of a hundred static documents, we simply feed NotebookLM our core handbooks—company history, processes, tool setups, and security protocols. Let me show you how a new hire can use this space from Day 1 to get answers instantly."
+
+💻 LIVE STEP-BY-STEP Walkthrough script:
+
+[Step 1: Show the Sources Panel (1-2 minutes)]
+- Point out the left sidebar of the screen.
+- Say: "As you can see over here, I have uploaded three core dummy documents: our Company Overview, our Processes guide, and our IT Security layout. NotebookLM instantly reads and synthesizes all of them into a secure, closed sandbox environment."
+
+[Step 2: Demonstrate Instant Q&A (2-3 minutes)]
+- Type a question live into the chat interface. Try this query:
+  👉 "I'm new here. What tools do I need to get access to on my first day, and what should I do if I get locked out?"
+- Say: "Watch how it parses multiple documents simultaneously. It doesn't just copy-paste; it formats the response neatly, listing Google Workspace, Slack, and 1Password, and points me to the #help-it-support channel if I'm locked out. It even gives citations directly back to our text."
+
+[Step 3: Test Tone and Synthesis (2 minutes)]
+- Type an organizational or cultural question. Try this query:
+  👉 "What is HiJiffy's stance on working hours and remote work culture?"
+- Say: "It pulls straight from our overview document to remind the new hire that we operate on a highly autonomous, remote-first model focused on impact rather than desk hours."
+
+[Step 4: Generate the 'Podcast' On-Demand (3 minutes)]
+- Navigate to the top right corner of the UI and open the Studio/Notebook Guide panel. Find the Audio Overview section and hit the Generate button.
+- Say: "Now, for the absolute coolest part of this tool. If a new hire prefers audio learning—say, during a morning walk or while making coffee—they can generate a synthetic 'Podcast' overview of these exact company documents. Let’s play a quick snippet of the AI hosts discussing HiJiffy's mission, remote culture, and Aplysia3."
+
+🏁 CONCLUSION & IMPACT WRAP-UP:
+"By deploying this internally, we achieve a few major wins:
+- Zero Delays: New hires don't have to wait around for managers to reply to common operational questions.
+- Multi-Format Learning: They can read it, query it like a chat assistant, or listen to it as an automated podcast.
+- Perfect Alignment: It's literally the exact same technology concept we sell to hotels with Aplysia3—using structured data to provide perfect automated answers—applied directly to our own team culture."
+
+📊 WANT OPTIONAL EXTRA STUDY GUIDE / FAQ SHEETS MATCHING THE DEMO?
+Copy the source documents into NotebookLM, and ask the Study Guide creator to instantly layout a Quiz, FAQ segment, or custom onboarding glossary in seconds!`
     },
     sites: {
       title: "Google Sites AI Hub",
@@ -2959,7 +3445,7 @@ Let's keep response velocity at 100% and friction at 0%!"`
                       : "border-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-800"
                   )}
                 >
-                  <div className={cn("p-2 rounded-xl shrink-0", activeLab === labKey ? "bg-google-green/15 text-google-green" : "bg-slate-250 text-slate-400")}>
+                  <div className={cn("p-2 rounded-xl shrink-0", activeLab === labKey ? "bg-google-green/15 text-google-green" : "bg-slate-200 text-slate-400")}>
                     <Icon className="w-5 h-5" />
                   </div>
                   <div>
@@ -3074,7 +3560,7 @@ Let's keep response velocity at 100% and friction at 0%!"`
                   {copiedId === `${activeLab}-b1` ? "Copied Blueprint" : "Copy Payload"}
                 </button>
               </div>
-              <pre className="font-mono text-[10px] leading-relaxed text-slate-600 max-h-56 overflow-y-auto bg-white p-3.5 border border-slate-150 rounded-xl whitespace-pre-wrap">
+              <pre className="font-mono text-[10px] leading-relaxed text-slate-600 max-h-56 overflow-y-auto bg-white p-3.5 border border-slate-200 rounded-xl whitespace-pre-wrap">
                 {currentLab.blueprintData1}
               </pre>
             </div>
@@ -3093,7 +3579,7 @@ Let's keep response velocity at 100% and friction at 0%!"`
                   {copiedId === `${activeLab}-b2` ? "Copied Formula" : "Copy Formula"}
                 </button>
               </div>
-              <pre className="font-mono text-[10px] leading-relaxed text-slate-600 max-h-56 overflow-y-auto bg-white p-3.5 border border-slate-150 rounded-xl whitespace-pre-wrap">
+              <pre className="font-mono text-[10px] leading-relaxed text-slate-600 max-h-56 overflow-y-auto bg-white p-3.5 border border-slate-200 rounded-xl whitespace-pre-wrap">
                 {currentLab.blueprintData2}
               </pre>
             </div>
@@ -3159,7 +3645,7 @@ function PresenterNotesSidePanel({ session, onClose }: { session: SessionType, o
                   "border rounded-2xl transition-all overflow-hidden",
                   isActive 
                     ? "border-amber-500/50 bg-slate-950/40 shadow-md" 
-                    : "border-slate-800 bg-slate-850 hover:bg-slate-800/50 cursor-pointer"
+                    : "border-slate-800 bg-slate-900 hover:bg-slate-800/50 cursor-pointer"
                 )}
               >
                 <div 
@@ -3167,7 +3653,7 @@ function PresenterNotesSidePanel({ session, onClose }: { session: SessionType, o
                   className="p-4 flex justify-between items-center gap-3 select-none"
                 >
                   <span className="font-bold text-sm md:text-base text-slate-100">{note.title}</span>
-                  <ChevronDown className={cn("w-5 h-5 text-slate-405 transition-all shrink-0", isActive && "rotate-180 text-amber-500")} />
+                  <ChevronDown className={cn("w-5 h-5 text-slate-400 transition-all shrink-0", isActive && "rotate-180 text-amber-500")} />
                 </div>
 
                 <AnimatePresence initial={false}>
@@ -3186,7 +3672,7 @@ function PresenterNotesSidePanel({ session, onClose }: { session: SessionType, o
                       {/* Speaking Script */}
                       <div className="space-y-1.5">
                         <span className="text-xs uppercase font-extrabold text-slate-400 tracking-wider">🎙️ Reading / Talking Script:</span>
-                        <p className="text-slate-100 text-xs md:text-sm bg-slate-900 p-3.5 rounded-xl border border-slate-850 whitespace-pre-line leading-relaxed font-normal">
+                        <p className="text-slate-100 text-xs md:text-sm bg-slate-900 p-3.5 rounded-xl border border-slate-800 whitespace-pre-line leading-relaxed font-normal">
                           {note.script}
                         </p>
                       </div>
@@ -3487,7 +3973,7 @@ Safe journeys! ✨`);
       <div className="space-y-4">
         <div className="space-y-1">
           <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 block font-google">System Persona Active Instructions:</label>
-          <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs text-slate-650 font-mono italic">
+          <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs text-slate-600 font-mono italic">
             "{activeGem.instructions}"
           </div>
         </div>
