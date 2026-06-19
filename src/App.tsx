@@ -2914,86 +2914,86 @@ EMAIL TEXT TO ANALYZE:
                 className="overflow-hidden border-t border-slate-200/50 bg-slate-50/30 font-sans text-xs"
               >
                 <div className="p-6 space-y-6">
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <span className="bg-google-blue/10 text-google-blue text-[10px] font-bold px-2 py-0.5 rounded tracking-wider uppercase">
-                      EXTERNAL REPOSTORY COUPLING & DYNAMIC SOURCES
+                      EXTERNAL REPOSITORY COUPLING & DYNAMIC SOURCES
                     </span>
-                    <h3 className="text-sm font-extrabold text-slate-800">
-                      🛡️ Deep Wiki Integration: Connecting Confluence Pages directly to Gems
+                    <h3 className="text-xs font-bold text-slate-800">
+                      Deep Wiki Integration: Connecting Confluence Pages directly to Gems
                     </h3>
-                    <p className="text-slate-600 leading-relaxed text-xs">
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
                       Keep your anchored Gem sources dynamic by automatically feeding other corporate repositories (like Confluence) into Google Docs pipelines:
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     {/* USE CASE 1 */}
-                    <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-2.5 shadow-xs hover:border-slate-300 transition-colors flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <span className="text-[9px] font-extrabold text-google-blue uppercase tracking-wider block bg-slate-100 px-2 py-0.5 rounded w-max">ROUTE 1</span>
-                        <h5 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                          🔄 The Automation Route: No-Code Sync Tools
+                    <div className="bg-white border border-slate-200 rounded-lg p-3 space-y-2 shadow-xs hover:border-slate-300 transition-colors flex flex-col justify-between">
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-bold text-google-blue uppercase tracking-wider block bg-slate-100 px-1.5 py-0.5 rounded w-max">ROUTE 1</span>
+                        <h5 className="text-[11px] font-semibold text-slate-800 leading-snug">
+                          🔄 Automation Route: No-Code Sync Tools
                         </h5>
-                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
-                          If you want a Google Doc to automatically update its text whenever a Confluence page changes, use an automation workflow platform like <strong>Make.com</strong>, <strong>Zapier</strong>, or <strong>n8n</strong>.
+                        <p className="text-[11px] text-slate-500 leading-relaxed">
+                          Use <strong>Make.com</strong>, <strong>Zapier</strong>, or <strong>n8n</strong> to automatically update a Google Doc whenever a Confluence page changes.
                         </p>
-                        <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-[10px] space-y-1 text-slate-600 font-sans">
-                          <p className="font-bold text-slate-700">Two-Step Rule Setup:</p>
-                          <p>• <strong>Trigger:</strong> When a page is updated in Confluence.</p>
-                          <p>• <strong>Action:</strong> Update/Append text in a specific Google Doc.</p>
+                        <div className="p-2 bg-slate-50 border border-slate-100 rounded-md text-[10px] space-y-0.5 text-slate-600">
+                          <p className="font-semibold text-slate-700">Two-Step Rule:</p>
+                          <p>• <strong>Trigger:</strong> Confluence page updated.</p>
+                          <p>• <strong>Action:</strong> Update text in a Google Doc.</p>
                         </div>
                       </div>
-                      <p className="text-[10px] text-slate-400 italic font-normal leading-normal pt-2 border-t border-slate-100 font-sans">
-                        Because the Google Doc is dynamically updated by the automation, any Gem pinned to that specific Doc will always read the most current, live information automatically.
+                      <p className="text-[10px] text-slate-400 italic leading-snug pt-1.5 border-t border-slate-100">
+                        Any Gem pinned to that Doc always reads the most current information automatically.
                       </p>
                     </div>
 
                     {/* USE CASE 2 */}
-                    <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-2.5 shadow-xs hover:border-slate-300 transition-colors flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <span className="text-[9px] font-extrabold text-google-blue uppercase tracking-wider block bg-slate-100 px-2 py-0.5 rounded w-max">ROUTE 2</span>
-                        <h5 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                          ☁️ The Google Cloud Route: Enterprise Connectors
+                    <div className="bg-white border border-slate-200 rounded-lg p-3 space-y-2 shadow-xs hover:border-slate-300 transition-colors flex flex-col justify-between">
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-bold text-google-blue uppercase tracking-wider block bg-slate-100 px-1.5 py-0.5 rounded w-max">ROUTE 2</span>
+                        <h5 className="text-[11px] font-semibold text-slate-800 leading-snug">
+                          ☁️ Google Cloud Route: Enterprise Connectors
                         </h5>
-                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal font-sans">
-                          For organizations utilizing enterprise environments, administrators can configure <strong>Google Cloud Integration Connectors</strong> to manage structured data feeds.
+                        <p className="text-[11px] text-slate-500 leading-relaxed">
+                          Admins can configure <strong>Google Cloud Integration Connectors</strong> to manage structured data feeds from enterprise environments.
                         </p>
-                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal p-2.5 bg-slate-50 border border-slate-200 rounded-lg font-sans">
-                          Google provides a dedicated native connector for Confluence, which programmatically couples Confluence spaces directly to Google Workspace data pipelines. Once configured, data flows automatically into Google Docs or BigQuery, making it securely accessible to enterprise Gemini instances.
+                        <p className="text-[11px] text-slate-500 leading-relaxed p-2 bg-slate-50 border border-slate-100 rounded-md">
+                          Google's native Confluence connector feeds data directly into Google Docs or BigQuery — securely accessible to enterprise Gemini instances.
                         </p>
                       </div>
-                      <p className="text-[10px] text-slate-400 italic font-normal leading-normal pt-2 border-t border-slate-100 font-sans">
+                      <p className="text-[10px] text-slate-400 italic leading-snug pt-1.5 border-t border-slate-100">
                         Maintains native workspace safety compliance.
                       </p>
                     </div>
 
                     {/* USE CASE 3 */}
-                    <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-2.5 shadow-xs hover:border-slate-300 transition-colors flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <span className="text-[9px] font-extrabold text-google-blue uppercase tracking-wider block bg-slate-100 px-2 py-0.5 rounded w-max">ROUTE 3</span>
-                        <h5 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                          📌 The Quick Reference Route: Atlassian Smart Chips
+                    <div className="bg-white border border-slate-200 rounded-lg p-3 space-y-2 shadow-xs hover:border-slate-300 transition-colors flex flex-col justify-between">
+                      <div className="space-y-1.5">
+                        <span className="text-[9px] font-bold text-google-blue uppercase tracking-wider block bg-slate-100 px-1.5 py-0.5 rounded w-max">ROUTE 3</span>
+                        <h5 className="text-[11px] font-semibold text-slate-800 leading-snug">
+                          📌 Quick Reference Route: Atlassian Smart Chips
                         </h5>
-                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal font-sans">
-                          If full text replication is not required, <strong>Atlassian Smart Chips</strong> can be utilized to make the resources recognizable within the document directory.
+                        <p className="text-[11px] text-slate-500 leading-relaxed">
+                          When full text replication isn't needed, <strong>Atlassian Smart Chips</strong> turn pasted Confluence URLs into rich metadata chips inside Google Docs.
                         </p>
-                        <p className="text-[11px] text-slate-500 leading-relaxed font-normal p-2.5 bg-slate-50 border border-slate-200 rounded-lg font-sans">
-                          Installing the Atlassian extension from the Google Workspace Marketplace allows pasted Confluence URLs inside a Google Doc to transform into "Smart Chips" showing metadata. While the full article content is not imported directly, this approach enables the file to act as an organized index for the Gemini workspace.
+                        <p className="text-[11px] text-slate-500 leading-relaxed p-2 bg-slate-50 border border-slate-100 rounded-md">
+                          Install the Atlassian extension from Google Workspace Marketplace — the Doc acts as an organized index that Gemini can reference.
                         </p>
                       </div>
-                      <p className="text-[10px] text-slate-400 italic font-normal leading-normal pt-2 border-t border-slate-100 font-sans">
-                        Saves manual layout and links organization efforts.
+                      <p className="text-[10px] text-slate-400 italic leading-snug pt-1.5 border-t border-slate-100">
+                        Saves manual layout and link organisation effort.
                       </p>
                     </div>
                   </div>
 
                   {/* SUMMARY REC BLOCK */}
-                  <div className="p-4 bg-blue-50/50 border border-blue-200 rounded-xl space-y-1">
-                    <span className="text-xs font-extrabold text-blue-950 flex items-center gap-1">
+                  <div className="p-3 bg-blue-50/50 border border-blue-200 rounded-lg space-y-1">
+                    <span className="text-[11px] font-semibold text-blue-900 flex items-center gap-1">
                       🎯 Summary Recommendation
                     </span>
-                    <p className="text-[11px] text-slate-600 leading-relaxed font-normal font-sans">
-                      For establishing a dynamic knowledge source, configuring a <strong>Make</strong> or <strong>Zapier</strong> synchronization to output the Confluence text into a designated Google Doc remains the primary recommendation.
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      For a dynamic knowledge source, configure a <strong>Make</strong> or <strong>Zapier</strong> sync to push Confluence content into a designated Google Doc. Any Gem anchored to that Doc stays live automatically.
                     </p>
                   </div>
                 </div>
